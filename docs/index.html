@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>프로젝트 문서 — React + Tailwind + Supabase</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3248;
+      --accent: #7c6af7;
+      --accent2: #38bdf8;
+      --green: #34d399;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --code-bg: #141722;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Pretendard', 'Noto Sans KR', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* ── 레이아웃 ── */
+    .layout { display: flex; min-height: 100vh; }
+
+    /* 사이드바 */
+    nav {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 28px 0 40px;
+    }
+
+    .nav-logo {
+      padding: 0 24px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .nav-logo .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #7c6af7 0%, #38bdf8 100%);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    .nav-logo h1 { font-size: 14px; font-weight: 700; color: var(--text); }
+    .nav-logo p { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    nav ul { list-style: none; padding: 0 12px; }
+    nav ul li a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 7px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      transition: background .15s, color .15s;
+    }
+    nav ul li a:hover { background: var(--surface2); color: var(--text); }
+    nav ul li a.active { background: rgba(124,106,247,.15); color: var(--accent); font-weight: 600; }
+    nav ul li a .icon { font-size: 15px; width: 20px; text-align: center; }
+    nav .section-label {
+      padding: 18px 24px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* 본문 */
+    main { flex: 1; max-width: 860px; padding: 48px 56px; }
+
+    /* 히어로 */
+    .hero {
+      background: linear-gradient(135deg, rgba(124,106,247,.15) 0%, rgba(56,189,248,.1) 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 36px 40px;
+      margin-bottom: 48px;
+    }
+    .hero .stack-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .hero .stack-badges span {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-react   { background: rgba(97,218,251,.15); color: #61dafb; border: 1px solid rgba(97,218,251,.3); }
+    .badge-tw      { background: rgba(56,189,248,.15); color: #38bdf8; border: 1px solid rgba(56,189,248,.3); }
+    .badge-supa    { background: rgba(52,211,153,.15); color: #34d399; border: 1px solid rgba(52,211,153,.3); }
+    .badge-vite    { background: rgba(189,147,249,.15); color: #bd93f9; border: 1px solid rgba(189,147,249,.3); }
+    .hero h2 { font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+    .hero p  { color: var(--muted); font-size: 15px; }
+
+    /* 섹션 */
+    section { margin-bottom: 56px; scroll-margin-top: 24px; }
+    section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    section h2 .sec-icon {
+      width: 32px; height: 32px;
+      background: rgba(124,106,247,.2);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    section h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent2);
+      margin: 24px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    /* 테이블 */
+    .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--surface2); }
+    thead th {
+      padding: 11px 18px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    tbody tr { border-top: 1px solid var(--border); }
+    tbody tr:hover { background: var(--surface2); }
+    tbody td { padding: 11px 18px; font-size: 14px; }
+    tbody td:first-child { color: var(--muted); font-weight: 600; }
+    tbody td code {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    /* 코드 블록 */
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 12px 0;
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .code-header .lang {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .code-header .dots { display: flex; gap: 6px; }
+    .code-header .dots span {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #28c840; }
+    pre {
+      padding: 18px 20px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      color: #cdd6f4;
+    }
+
+    /* 디렉토리 트리 */
+    .dir-tree {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.9;
+    }
+    .dir-tree .dir  { color: var(--accent2); font-weight: 600; }
+    .dir-tree .file { color: #cdd6f4; }
+    .dir-tree .note { color: var(--muted); }
+
+    /* 기능 카드 */
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .feature-card h4 {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 700; margin-bottom: 12px;
+      color: var(--text);
+    }
+    .feature-card ul { padding-left: 18px; }
+    .feature-card li {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      line-height: 1.6;
+    }
+    .feature-card li code {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      color: var(--accent);
+    }
+
+    /* 라우트 목록 */
+    .route-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .route-list li {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+    .route-list .path {
+      font-family: monospace;
+      color: var(--accent);
+      font-weight: 700;
+      min-width: 200px;
+    }
+    .route-list .arrow { color: var(--muted); }
+    .route-list .desc { color: var(--text); }
+    .route-list .badge-auth {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(124,106,247,.2);
+      color: var(--accent);
+      border: 1px solid rgba(124,106,247,.3);
+    }
+
+    /* 규칙 카드 */
+    .rule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .rule-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .rule-card h4 {
+      font-size: 13px; font-weight: 700;
+      color: var(--accent2);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .rule-card ul { padding-left: 18px; }
+    .rule-card li {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .rule-card li code {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      color: var(--accent);
+    }
+
+    /* 경고 박스 */
+    .callout {
+      display: flex;
+      gap: 12px;
+      padding: 16px 18px;
+      border-radius: var(--radius);
+      border: 1px solid;
+      margin: 16px 0;
+      font-size: 13.5px;
+    }
+    .callout-warn {
+      background: rgba(251,191,36,.07);
+      border-color: rgba(251,191,36,.3);
+      color: #fbbf24;
+    }
+    .callout-info {
+      background: rgba(56,189,248,.07);
+      border-color: rgba(56,189,248,.3);
+      color: var(--accent2);
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; }
+
+    /* 실행 명령 */
+    .cmd-list { display: flex; flex-direction: column; gap: 10px; }
+    .cmd-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 18px;
+    }
+    .cmd-item .prompt { color: var(--green); font-weight: 700; font-family: monospace; }
+    .cmd-item .cmd { font-family: monospace; font-size: 14px; color: #cdd6f4; }
+    .cmd-item .comment { margin-left: auto; font-size: 12px; color: var(--muted); }
+
+    /* 푸터 */
+    footer {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ERD 요약 */
+    .erd-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 24px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .erd-node {
+      padding: 6px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      font-family: monospace;
+    }
+    .erd-users  { background: rgba(124,106,247,.2); color: var(--accent);  border: 1px solid rgba(124,106,247,.4); }
+    .erd-posts  { background: rgba(56,189,248,.2);  color: var(--accent2); border: 1px solid rgba(56,189,248,.4);  }
+    .erd-boards { background: rgba(52,211,153,.2);  color: var(--green);   border: 1px solid rgba(52,211,153,.4);  }
+    .erd-arrow  { color: var(--muted); font-family: monospace; font-size: 13px; }
+
+    /* 시드 데이터 카드 */
+    .board-seed-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .seed-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .seed-card .seed-num {
+      display: block;
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-family: monospace;
+    }
+    .seed-card strong { font-size: 13px; color: var(--text); display: block; margin-bottom: 4px; }
+    .seed-card p { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+    /* IA 메뉴 바 */
+    .ia-nav-bar {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .ia-menu-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 10px;
+      text-align: center;
+      transition: border-color .2s;
+    }
+    .ia-menu-card:hover { border-color: var(--accent); }
+    .ia-menu-icon { font-size: 24px; margin-bottom: 8px; }
+    .ia-menu-card strong { display: block; font-size: 13px; color: var(--text); margin-bottom: 6px; }
+    .ia-menu-card code {
+      font-size: 11px; color: var(--muted);
+      background: var(--code-bg); border: 1px solid var(--border);
+      padding: 2px 6px; border-radius: 4px;
+    }
+    .ia-home     { border-top: 3px solid #7c6af7; }
+    .ia-about    { border-top: 3px solid #38bdf8; }
+    .ia-products { border-top: 3px solid #34d399; }
+    .ia-board    { border-top: 3px solid #fbbf24; }
+    .ia-contact  { border-top: 3px solid #f87171; }
+
+    /* IA 서브메뉴 */
+    .ia-sub-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .ia-sub-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .ia-sub-header {
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .ia-about-h    { background: rgba(56,189,248,.3);  color: var(--accent2); }
+    .ia-products-h { background: rgba(52,211,153,.3);  color: var(--green); }
+    .ia-board-h    { background: rgba(251,191,36,.25); color: #fbbf24; }
+    .ia-contact-h  { background: rgba(248,113,113,.25);color: #f87171; }
+    .ia-sub-list   { list-style: none; padding: 10px 0; }
+    .ia-sub-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ia-sub-list li:last-child { border-bottom: none; }
+    .ia-path { font-family: monospace; font-size: 12px; color: var(--accent); }
+    .ia-sub-desc { font-size: 12px; color: var(--muted); }
+    .ia-sub-desc em { font-style: normal; font-size: 11px; }
+
+    /* MCP 연결 흐름 */
+    .mcp-flow {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin-bottom: 24px;
+    }
+    .mcp-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      flex: 1;
+    }
+    .mcp-step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7c6af7, #38bdf8);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .mcp-step-body strong { font-size: 13px; color: var(--text); display: block; margin-bottom: 4px; }
+    .mcp-step-body p { font-size: 12px; color: var(--muted); }
+    .mcp-step-body code {
+      background: var(--code-bg); border: 1px solid var(--border);
+      padding: 1px 5px; border-radius: 4px; font-size: 11px; color: var(--accent);
+    }
+    .mcp-connector {
+      width: 28px;
+      height: 2px;
+      background: var(--border);
+      align-self: center;
+      flex-shrink: 0;
+    }
+
+    /* MCP 기능 카드 */
+    .mcp-cap-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 12px 0 20px;
+    }
+    .mcp-cap-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 14px;
+      text-align: center;
+    }
+    .mcp-cap-icon { font-size: 22px; margin-bottom: 8px; }
+    .mcp-cap-card strong { font-size: 13px; color: var(--text); display: block; margin-bottom: 4px; }
+    .mcp-cap-card p { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+    /* MCP 예시 */
+    .mcp-example-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+    .mcp-example {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #cdd6f4;
+    }
+    .mcp-prompt { color: var(--green); font-weight: 700; margin-right: 8px; }
+
+    @media (max-width: 900px) {
+      nav { display: none; }
+      main { padding: 32px 24px; }
+      .feature-grid, .rule-grid { grid-template-columns: 1fr; }
+      .board-seed-grid { grid-template-columns: repeat(3, 1fr); }
+      .erd-summary { justify-content: center; }
+      .mcp-flow { flex-direction: column; }
+      .mcp-connector { width: 2px; height: 16px; align-self: center; }
+      .mcp-cap-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- 사이드 네비게이션 -->
+  <nav>
+    <div class="nav-logo">
+      <div class="badge">DOCS</div>
+      <h1>React Board App</h1>
+      <p>React · Tailwind · Supabase</p>
+    </div>
+    <div class="section-label">시작하기</div>
+    <ul>
+      <li><a href="#overview" class="active"><span class="icon">🏠</span>프로젝트 개요</a></li>
+      <li><a href="#stack"><span class="icon">⚙️</span>기술 스택</a></li>
+      <li><a href="#structure"><span class="icon">📁</span>디렉토리 구조</a></li>
+    </ul>
+    <div class="section-label">Supabase</div>
+    <ul>
+      <li><a href="#supabase-setup"><span class="icon">🔑</span>설정</a></li>
+      <li><a href="#schema"><span class="icon">🗄️</span>데이터베이스 스키마</a></li>
+      <li><a href="#rls"><span class="icon">🛡️</span>RLS 정책</a></li>
+      <li><a href="#schema"><span class="icon">🌱</span>시드 데이터</a></li>
+    </ul>
+    <div class="section-label">개발</div>
+    <ul>
+      <li><a href="#features"><span class="icon">✨</span>주요 기능</a></li>
+      <li><a href="#routes"><span class="icon">🗺️</span>라우트 구조</a></li>
+      <li><a href="#mcp"><span class="icon">🔌</span>Supabase MCP</a></li>
+      <li><a href="#rules"><span class="icon">📏</span>개발 규칙</a></li>
+      <li><a href="#run"><span class="icon">▶️</span>실행 방법</a></li>
+      <li><a href="#notes"><span class="icon">📌</span>참고사항</a></li>
+    </ul>
+  </nav>
+
+  <!-- 본문 -->
+  <main>
+
+    <!-- 히어로 -->
+    <div class="hero">
+      <div class="stack-badges">
+        <span class="badge-react">React 18</span>
+        <span class="badge-tw">Tailwind CSS v3</span>
+        <span class="badge-supa">Supabase</span>
+        <span class="badge-vite">Vite</span>
+      </div>
+      <h2>회원가입 &amp; 게시판 앱</h2>
+      <p>이메일 인증 기반 회원가입, 게시글 CRUD, 댓글 기능을 포함한 풀스택 웹 애플리케이션 프로젝트 문서입니다.</p>
+    </div>
+
+    <!-- 프로젝트 개요 -->
+    <section id="overview">
+      <h2><span class="sec-icon">🏠</span>프로젝트 개요</h2>
+      <p>회원가입 및 게시판 기능을 갖춘 웹 애플리케이션입니다. Supabase를 백엔드로 사용하여 별도 서버 없이 인증, 데이터베이스, 스토리지를 모두 처리합니다.</p>
+    </section>
+
+    <!-- 기술 스택 -->
+    <section id="stack">
+      <h2><span class="sec-icon">⚙️</span>기술 스택</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>구분</th><th>기술</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>프론트엔드</td><td>React 18, React Router v6</td></tr>
+            <tr><td>스타일</td><td>Tailwind CSS v3</td></tr>
+            <tr><td>백엔드/DB</td><td>Supabase (Auth, PostgreSQL, Storage)</td></tr>
+            <tr><td>빌드 도구</td><td>Vite</td></tr>
+            <tr><td>상태 관리</td><td>React Context API (또는 Zustand)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 디렉토리 구조 -->
+    <section id="structure">
+      <h2><span class="sec-icon">📁</span>디렉토리 구조</h2>
+      <div class="dir-tree">
+        <div><span class="dir">src/</span></div>
+        <div>&nbsp;├── <span class="dir">components/</span>  <span class="note"># 공통 컴포넌트</span></div>
+        <div>&nbsp;│&nbsp;&nbsp; ├── <span class="dir">ui/</span>        <span class="note"># 버튼, 인풋, 모달 등 원자 컴포넌트</span></div>
+        <div>&nbsp;│&nbsp;&nbsp; └── <span class="dir">layout/</span>    <span class="note"># Header, Footer, Layout</span></div>
+        <div>&nbsp;├── <span class="dir">pages/</span>       <span class="note"># 라우트별 페이지</span></div>
+        <div>&nbsp;│&nbsp;&nbsp; ├── <span class="dir">auth/</span>      <span class="note"># 로그인, 회원가입</span></div>
+        <div>&nbsp;│&nbsp;&nbsp; └── <span class="dir">board/</span>     <span class="note"># 게시판 목록, 상세, 작성</span></div>
+        <div>&nbsp;├── <span class="dir">hooks/</span>       <span class="note"># 커스텀 훅</span></div>
+        <div>&nbsp;├── <span class="dir">lib/</span>         <span class="note"># supabase 클라이언트, 유틸</span></div>
+        <div>&nbsp;├── <span class="dir">contexts/</span>    <span class="note"># AuthContext 등</span></div>
+        <div>&nbsp;└── <span class="dir">types/</span>       <span class="note"># TypeScript 타입 정의</span></div>
+      </div>
+    </section>
+
+    <!-- Supabase 설정 -->
+    <section id="supabase-setup">
+      <h2><span class="sec-icon">🔑</span>Supabase 설정</h2>
+      <h3>환경 변수 (.env.local)</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang">ENV</span>
+          <div class="dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <pre>VITE_SUPABASE_URL=&lt;your-project-url&gt;
+VITE_SUPABASE_ANON_KEY=&lt;your-anon-key&gt;</pre>
+      </div>
+      <h3>클라이언트 초기화 (src/lib/supabase.ts)</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang">TypeScript</span>
+          <div class="dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <pre>import { createClient } from '@supabase/supabase-js'
+
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+)</pre>
+      </div>
+    </section>
+
+    <!-- 데이터베이스 스키마 -->
+    <section id="schema">
+      <h2><span class="sec-icon">🗄️</span>데이터베이스 스키마</h2>
+
+      <!-- ERD 관계 요약 -->
+      <div class="erd-summary">
+        <div class="erd-node erd-users">users</div>
+        <div class="erd-arrow">1 ──── N</div>
+        <div class="erd-node erd-posts">posts</div>
+        <div class="erd-arrow">N ──── 1</div>
+        <div class="erd-node erd-boards">boards</div>
+      </div>
+
+      <h3>public.users 테이블 (사용자 정보)</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang">SQL</span>
+          <div class="dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <pre>create table public.users (
+    id uuid primary key references auth.users(id) on delete cascade,
+
+    email text unique not null,
+    nickname varchar(30) not null,
+
+    profile_image text,
+    introduction text,
+
+    sido varchar(50),
+    sigungu varchar(50),
+    dong varchar(50),
+
+    latitude  numeric(10,7),
+    longitude numeric(10,7),
+
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+);</pre>
+      </div>
+
+      <!-- 컬럼 설명 테이블 -->
+      <div class="table-wrap" style="margin-bottom:20px">
+        <table>
+          <thead><tr><th>컬럼</th><th>타입</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>uuid</td><td>auth.users PK 참조</td></tr>
+            <tr><td><code>nickname</code></td><td>varchar(30)</td><td>표시 이름</td></tr>
+            <tr><td><code>profile_image</code></td><td>text</td><td>Storage URL</td></tr>
+            <tr><td><code>sido / sigungu / dong</code></td><td>varchar</td><td>행정구역 (지역 기반 기능용)</td></tr>
+            <tr><td><code>latitude / longitude</code></td><td>numeric(10,7)</td><td>좌표 (소수점 7자리)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>public.boards 테이블 (게시판)</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang">SQL</span>
+          <div class="dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <pre>create table public.boards (
+    id bigint generated always as identity primary key,
+
+    name        varchar(50) not null,
+    description text,
+
+    is_active   boolean not null default true,
+
+    created_at  timestamptz not null default now()
+);</pre>
+      </div>
+
+      <h3>public.posts 테이블 (게시글)</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang">SQL</span>
+          <div class="dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <pre>create table public.posts (
+    id bigint generated always as identity primary key,
+
+    user_id  uuid   not null references public.users(id) on delete cascade,
+    board_id bigint not null references public.boards(id),
+
+    title   varchar(200) not null,
+    content text         not null,
+
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
+);</pre>
+      </div>
+
+      <h3>인덱스</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang">SQL</span>
+          <div class="dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <pre>create index idx_posts_user_id    on public.posts(user_id);
+create index idx_posts_board_id   on public.posts(board_id);
+create index idx_posts_created_at on public.posts(created_at desc);</pre>
+      </div>
+
+      <h3>Boards 시드 데이터</h3>
+      <div class="board-seed-grid">
+        <div class="seed-card"><span class="seed-num">01</span><strong>자유게시판</strong><p>자유롭게 소통하는 게시판</p></div>
+        <div class="seed-card"><span class="seed-num">02</span><strong>운동인증</strong><p>운동 기록을 공유하는 게시판</p></div>
+        <div class="seed-card"><span class="seed-num">03</span><strong>질문게시판</strong><p>운동 관련 질문 게시판</p></div>
+        <div class="seed-card"><span class="seed-num">04</span><strong>번개후기</strong><p>번개모임 후기 게시판</p></div>
+        <div class="seed-card"><span class="seed-num">05</span><strong>정보공유</strong><p>운동 정보 공유 게시판</p></div>
+      </div>
+      <div class="code-block" style="margin-top:12px">
+        <div class="code-header">
+          <span class="lang">SQL</span>
+          <div class="dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <pre>insert into public.boards (name, description)
+values
+  ('자유게시판', '자유롭게 소통하는 게시판'),
+  ('운동인증',   '운동 기록을 공유하는 게시판'),
+  ('질문게시판', '운동 관련 질문 게시판'),
+  ('번개후기',   '번개모임 후기 게시판'),
+  ('정보공유',   '운동 정보 공유 게시판');</pre>
+      </div>
+    </section>
+
+    <!-- RLS -->
+    <section id="rls">
+      <h2><span class="sec-icon">🛡️</span>RLS (Row Level Security) 정책</h2>
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <span>RLS 정책 누락 시 403 에러가 발생합니다. 새 테이블 추가 시 반드시 RLS를 설정하세요.</span>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang">SQL</span>
+          <div class="dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <pre>-- users: 본인만 수정, 읽기는 공개
+alter table public.users enable row level security;
+create policy "users_select" on public.users for select using (true);
+create policy "users_insert" on public.users for insert with check (auth.uid() = id);
+create policy "users_update" on public.users for update using (auth.uid() = id);
+
+-- boards: is_active = true 인 경우만 공개
+alter table public.boards enable row level security;
+create policy "boards_select" on public.boards for select using (is_active = true);
+
+-- posts: 누구나 읽기, 로그인 사용자만 쓰기
+alter table public.posts enable row level security;
+create policy "posts_select" on public.posts for select using (true);
+create policy "posts_insert" on public.posts for insert with check (auth.uid() = user_id);
+create policy "posts_update" on public.posts for update using (auth.uid() = user_id);
+create policy "posts_delete" on public.posts for delete using (auth.uid() = user_id);</pre>
+      </div>
+    </section>
+
+    <!-- 주요 기능 -->
+    <section id="features">
+      <h2><span class="sec-icon">✨</span>주요 기능</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h4>🔐 인증 (Auth)</h4>
+          <ul>
+            <li>이메일/패스워드 회원가입<br><code>supabase.auth.signUp</code></li>
+            <li>로그인 / 로그아웃<br><code>supabase.auth.signInWithPassword</code></li>
+            <li>세션 자동 복원<br><code>onAuthStateChange</code></li>
+            <li>보호된 라우트 — 비로그인 시 <code>/login</code> 리다이렉트</li>
+          </ul>
+        </div>
+        <div class="feature-card">
+          <h4>📋 게시판</h4>
+          <ul>
+            <li>게시판 목록 — <code>is_active = true</code> 필터</li>
+            <li>게시글 목록 + 페이지네이션<br><code>.range(from, to)</code>, <code>board_id</code> 필터</li>
+            <li>게시글 작성 / 수정 / 삭제<br>(<code>user_id</code> 기준 RLS 적용)</li>
+            <li>상세 조회 — users join으로<br>닉네임·프로필 표시</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- IA / 메뉴 구조 -->
+    <section id="ia">
+      <h2><span class="sec-icon">🗂️</span>IA / 메뉴 구조</h2>
+
+      <!-- 1단계 메뉴 카드 -->
+      <div class="ia-nav-bar">
+        <div class="ia-menu-card ia-home">
+          <div class="ia-menu-icon">🏠</div>
+          <strong>홈</strong>
+          <code>/</code>
+        </div>
+        <div class="ia-menu-card ia-about">
+          <div class="ia-menu-icon">🏢</div>
+          <strong>회사소개</strong>
+          <code>/about</code>
+        </div>
+        <div class="ia-menu-card ia-products">
+          <div class="ia-menu-icon">📦</div>
+          <strong>제품소개</strong>
+          <code>/products</code>
+        </div>
+        <div class="ia-menu-card ia-board">
+          <div class="ia-menu-icon">📋</div>
+          <strong>게시판</strong>
+          <code>/board</code>
+        </div>
+        <div class="ia-menu-card ia-contact">
+          <div class="ia-menu-icon">✉️</div>
+          <strong>온라인 문의</strong>
+          <code>/contact</code>
+        </div>
+      </div>
+
+      <!-- 2단계 서브메뉴 -->
+      <div class="ia-sub-grid">
+        <div class="ia-sub-card">
+          <div class="ia-sub-header ia-about-h">🏢 회사소개</div>
+          <ul class="ia-sub-list">
+            <li><span class="ia-path">/about</span><span class="ia-sub-desc">회사 개요</span></li>
+            <li><span class="ia-path">/about/history</span><span class="ia-sub-desc">연혁</span></li>
+            <li><span class="ia-path">/about/organization</span><span class="ia-sub-desc">조직도</span></li>
+            <li><span class="ia-path">/about/location</span><span class="ia-sub-desc">오시는 길</span></li>
+          </ul>
+        </div>
+        <div class="ia-sub-card">
+          <div class="ia-sub-header ia-products-h">📦 제품소개</div>
+          <ul class="ia-sub-list">
+            <li><span class="ia-path">/products</span><span class="ia-sub-desc">제품 목록</span></li>
+            <li><span class="ia-path">/products/:id</span><span class="ia-sub-desc">제품 상세</span></li>
+          </ul>
+        </div>
+        <div class="ia-sub-card">
+          <div class="ia-sub-header ia-board-h">📋 게시판</div>
+          <ul class="ia-sub-list">
+            <li><span class="ia-path">/board</span><span class="ia-sub-desc">게시판 선택</span></li>
+            <li><span class="ia-path">/board/:boardId</span><span class="ia-sub-desc">게시글 목록</span></li>
+            <li><span class="ia-path">/board/:boardId/write</span><span class="ia-sub-desc">게시글 작성 <em>🔐</em></span></li>
+            <li><span class="ia-path">/board/:boardId/:id</span><span class="ia-sub-desc">게시글 상세</span></li>
+            <li><span class="ia-path">/board/:boardId/:id/edit</span><span class="ia-sub-desc">게시글 수정 <em>🔐</em></span></li>
+          </ul>
+        </div>
+        <div class="ia-sub-card">
+          <div class="ia-sub-header ia-contact-h">✉️ 온라인 문의</div>
+          <ul class="ia-sub-list">
+            <li><span class="ia-path">/contact</span><span class="ia-sub-desc">문의 폼</span></li>
+            <li><span class="ia-path">/contact/complete</span><span class="ia-sub-desc">문의 완료</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 공통 영역 -->
+      <h3>공통 영역</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>영역</th><th>위치</th><th>포함 항목</th></tr></thead>
+          <tbody>
+            <tr><td>Header</td><td>최상단 고정 (sticky)</td><td>로고, 1단계 메뉴 전체, 로그인/로그아웃 버튼</td></tr>
+            <tr><td>Footer</td><td>최하단</td><td>회사명, 주소, 연락처, 저작권</td></tr>
+            <tr><td>404</td><td>없는 경로</td><td>Not Found 안내 + 홈 버튼</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 라우트 구조 -->
+    <section id="routes">
+      <h2><span class="sec-icon">🗺️</span>라우트 구조</h2>
+      <ul class="route-list">
+        <li><span class="path">/</span><span class="arrow">→</span><span class="desc">홈 (메인 랜딩)</span></li>
+        <li><span class="path">/about</span><span class="arrow">→</span><span class="desc">회사소개</span></li>
+        <li><span class="path">/about/history</span><span class="arrow">→</span><span class="desc">연혁</span></li>
+        <li><span class="path">/about/organization</span><span class="arrow">→</span><span class="desc">조직도</span></li>
+        <li><span class="path">/about/location</span><span class="arrow">→</span><span class="desc">오시는 길</span></li>
+        <li><span class="path">/products</span><span class="arrow">→</span><span class="desc">제품소개 목록</span></li>
+        <li><span class="path">/products/:id</span><span class="arrow">→</span><span class="desc">제품 상세</span></li>
+        <li><span class="path">/board</span><span class="arrow">→</span><span class="desc">게시판 선택</span></li>
+        <li><span class="path">/board/:boardId</span><span class="arrow">→</span><span class="desc">게시글 목록</span></li>
+        <li><span class="path">/board/:boardId/write</span><span class="arrow">→</span><span class="desc">게시글 작성</span><span class="badge-auth">로그인 필요</span></li>
+        <li><span class="path">/board/:boardId/:id</span><span class="arrow">→</span><span class="desc">게시글 상세</span></li>
+        <li><span class="path">/board/:boardId/:id/edit</span><span class="arrow">→</span><span class="desc">게시글 수정</span><span class="badge-auth">작성자 본인</span></li>
+        <li><span class="path">/contact</span><span class="arrow">→</span><span class="desc">온라인 문의 폼</span></li>
+        <li><span class="path">/contact/complete</span><span class="arrow">→</span><span class="desc">문의 완료</span></li>
+        <li><span class="path">/login</span><span class="arrow">→</span><span class="desc">로그인</span></li>
+        <li><span class="path">/signup</span><span class="arrow">→</span><span class="desc">회원가입</span></li>
+        <li><span class="path">*</span><span class="arrow">→</span><span class="desc">404 Not Found</span></li>
+      </ul>
+    </section>
+
+    <!-- 개발 규칙 -->
+    <section id="rules">
+      <h2><span class="sec-icon">📏</span>개발 규칙</h2>
+      <div class="rule-grid">
+        <div class="rule-card">
+          <h4>코드 스타일</h4>
+          <ul>
+            <li>TypeScript 사용, <code>any</code> 금지</li>
+            <li>컴포넌트는 함수형 + 화살표 함수</li>
+            <li>Tailwind 클래스는 <code>clsx</code> 또는 <code>cn</code> 유틸로 조합</li>
+          </ul>
+        </div>
+        <div class="rule-card">
+          <h4>Supabase 쿼리</h4>
+          <ul>
+            <li>모든 호출은 <code>hooks/</code> 또는 <code>lib/</code> 에서 관리</li>
+            <li>페이지에서 직접 <code>supabase.*</code> 호출 금지</li>
+            <li>에러는 항상 처리 (<code>.error</code> 체크 필수)</li>
+          </ul>
+        </div>
+        <div class="rule-card">
+          <h4>인증 상태</h4>
+          <ul>
+            <li><code>AuthContext</code>에서 <code>user</code>, <code>session</code>, <code>loading</code> 제공</li>
+            <li><code>loading</code> 중에는 스피너 렌더링, 플리커 방지</li>
+          </ul>
+        </div>
+        <div class="rule-card">
+          <h4>Tailwind 규칙</h4>
+          <ul>
+            <li>디자인 토큰은 <code>tailwind.config.js</code>의 <code>extend</code>에 정의</li>
+            <li>반응형 우선: <code>sm:</code> → <code>md:</code> → <code>lg:</code> 순서</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 실행 방법 -->
+    <section id="run">
+      <h2><span class="sec-icon">▶️</span>실행 방법</h2>
+      <div class="cmd-list">
+        <div class="cmd-item">
+          <span class="prompt">$</span>
+          <span class="cmd">npm install</span>
+          <span class="comment">의존성 설치</span>
+        </div>
+        <div class="cmd-item">
+          <span class="prompt">$</span>
+          <span class="cmd">npm run dev</span>
+          <span class="comment">개발 서버 시작</span>
+        </div>
+        <div class="cmd-item">
+          <span class="prompt">$</span>
+          <span class="cmd">npm run build</span>
+          <span class="comment">프로덕션 빌드</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Supabase MCP -->
+    <section id="mcp">
+      <h2><span class="sec-icon">🔌</span>Supabase MCP 연동</h2>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:20px">
+        Claude Code에서 MCP 서버를 통해 DB 스키마 조회, SQL 실행, 마이그레이션 적용을 대화 중 직접 수행할 수 있습니다.
+      </p>
+
+      <!-- 연결 흐름 -->
+      <div class="mcp-flow">
+        <div class="mcp-step">
+          <div class="mcp-step-num">1</div>
+          <div class="mcp-step-body">
+            <strong>Access Token 발급</strong>
+            <p>Supabase 대시보드 → Account → Access Tokens → Generate new token</p>
+          </div>
+        </div>
+        <div class="mcp-connector"></div>
+        <div class="mcp-step">
+          <div class="mcp-step-num">2</div>
+          <div class="mcp-step-body">
+            <strong>MCP 서버 등록</strong>
+            <p><code>.claude/settings.json</code> 또는 전역 <code>~/.claude/settings.json</code></p>
+          </div>
+        </div>
+        <div class="mcp-connector"></div>
+        <div class="mcp-step">
+          <div class="mcp-step-num">3</div>
+          <div class="mcp-step-body">
+            <strong>Claude Code에서 바로 사용</strong>
+            <p>대화 중 자연어로 DB 작업 요청</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>settings.json 설정</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="lang">JSON</span>
+          <div class="dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        </div>
+        <pre>{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "&lt;your-personal-access-token&gt;"
+      ]
+    }
+  }
+}</pre>
+      </div>
+
+      <div class="callout callout-info" style="margin-top:8px">
+        <span class="callout-icon">💡</span>
+        <span>특정 프로젝트만 허용하려면 <code>--project-ref &lt;ref&gt;</code> 옵션을 추가하세요.</span>
+      </div>
+
+      <h3>MCP로 할 수 있는 작업</h3>
+      <div class="mcp-cap-grid">
+        <div class="mcp-cap-card">
+          <div class="mcp-cap-icon">🗄️</div>
+          <strong>스키마 조회</strong>
+          <p>테이블, 컬럼, 인덱스, FK 확인</p>
+        </div>
+        <div class="mcp-cap-card">
+          <div class="mcp-cap-icon">⚡</div>
+          <strong>SQL 실행</strong>
+          <p>SELECT / INSERT / UPDATE / DELETE 직접 실행</p>
+        </div>
+        <div class="mcp-cap-card">
+          <div class="mcp-cap-icon">🔄</div>
+          <strong>마이그레이션</strong>
+          <p>DDL 변경사항을 대화 중 즉시 반영</p>
+        </div>
+        <div class="mcp-cap-card">
+          <div class="mcp-cap-icon">🛡️</div>
+          <strong>RLS 확인</strong>
+          <p>적용된 정책 목록 및 내용 조회</p>
+        </div>
+        <div class="mcp-cap-card">
+          <div class="mcp-cap-icon">⚙️</div>
+          <strong>함수/트리거</strong>
+          <p>DB 함수 생성·수정·삭제</p>
+        </div>
+        <div class="mcp-cap-card">
+          <div class="mcp-cap-icon">📋</div>
+          <strong>로그 조회</strong>
+          <p>최근 쿼리 로그 및 에러 확인</p>
+        </div>
+      </div>
+
+      <h3>사용 예시</h3>
+      <div class="mcp-example-list">
+        <div class="mcp-example"><span class="mcp-prompt">Claude&gt;</span> supabase MCP로 public.users 테이블 스키마 확인해줘</div>
+        <div class="mcp-example"><span class="mcp-prompt">Claude&gt;</span> supabase MCP로 boards 시드 데이터 insert 실행해줘</div>
+        <div class="mcp-example"><span class="mcp-prompt">Claude&gt;</span> supabase MCP로 posts 인덱스 현황 조회해줘</div>
+        <div class="mcp-example"><span class="mcp-prompt">Claude&gt;</span> supabase MCP로 RLS 정책 전체 목록 보여줘</div>
+      </div>
+
+      <h3>주의사항</h3>
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <span><code>access-token</code>은 <code>.claude/settings.json</code>에 직접 커밋하지 마세요 — <code>settings.local.json</code>에 보관하거나 환경 변수를 사용하세요.</span>
+      </div>
+      <div class="callout callout-warn">
+        <span class="callout-icon">🚨</span>
+        <span>MCP를 통한 <code>DROP</code>, <code>TRUNCATE</code> 등 파괴적 쿼리는 실행 전 반드시 확인하세요. 프로덕션에는 <code>--project-ref</code>로 범위를 제한하는 것을 권장합니다.</span>
+      </div>
+    </section>
+
+    <!-- 참고사항 -->
+    <section id="notes">
+      <h2><span class="sec-icon">📌</span>구현 시 참고사항</h2>
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <span>Supabase Auth의 <strong>confirmEmail</strong> 설정에 따라 회원가입 후 이메일 인증 흐름이 달라집니다.</span>
+      </div>
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <span>개발 환경에서는 Supabase 대시보드 → Authentication → Email에서 <strong>"Confirm email"을 비활성화</strong>하는 것을 권장합니다.</span>
+      </div>
+      <div class="callout callout-warn">
+        <span class="callout-icon">🛡️</span>
+        <span>RLS 정책 누락 시 403 에러 발생 — 새 테이블 추가 시 반드시 RLS 설정을 잊지 마세요.</span>
+      </div>
+    </section>
+
+    <footer>
+      <p>Generated from <strong>CLAUDE.md</strong> &mdash; React + Tailwind CSS + Supabase Project</p>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // 스크롤 시 사이드바 활성 링크 업데이트
+  const links = document.querySelectorAll('nav a');
+  const sections = document.querySelectorAll('section');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.35 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
