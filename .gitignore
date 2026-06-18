@@ -38,4 +38,5 @@ coverage
 .vite
 
 #claude
-.claude
+.claude/
+.mcp.json
