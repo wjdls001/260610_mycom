@@ -1,31 +1,32 @@
-import { Routes, Route } from 'react-router-dom'
-import { Layout } from './components/layout/Layout'
-import { ProtectedRoute } from './components/layout/ProtectedRoute'
+import { Routes, Route } from "react-router-dom";
+import { Layout } from "./components/layout/Layout";
+import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 
-import { Home } from './pages/Home'
-import { NotFound } from './pages/NotFound'
+import { Home } from "./pages/Home";
+import { NotFound } from "./pages/NotFound";
 
-import { Login } from './pages/auth/Login'
-import { Signup } from './pages/auth/Signup'
+import { Login } from "./pages/auth/Login";
+import { LoginComplete } from "./pages/auth/LoginComplete";
+import { Signup } from "./pages/auth/Signup";
 
-import { About } from './pages/about/About'
-import { History } from './pages/about/History'
-import { Organization } from './pages/about/Organization'
-import { Location } from './pages/about/Location'
+import { About } from "./pages/about/About";
+import { History } from "./pages/about/History";
+import { Organization } from "./pages/about/Organization";
+import { Location } from "./pages/about/Location";
 
-import { ProductList } from './pages/products/ProductList'
-import { ProductDetail } from './pages/products/ProductDetail'
-import { ProductWrite } from './pages/products/ProductWrite'
+import { ProductList } from "./pages/products/ProductList";
+import { ProductDetail } from "./pages/products/ProductDetail";
+import { ProductWrite } from "./pages/products/ProductWrite";
 
-import { BoardList } from './pages/board/BoardList'
-import { PostList } from './pages/board/PostList'
-import { PostDetail } from './pages/board/PostDetail'
-import { PostWrite } from './pages/board/PostWrite'
-import { PostEdit } from './pages/board/PostEdit'
+import { BoardList } from "./pages/board/BoardList";
+import { PostList } from "./pages/board/PostList";
+import { PostDetail } from "./pages/board/PostDetail";
+import { PostWrite } from "./pages/board/PostWrite";
+import { PostEdit } from "./pages/board/PostEdit";
 
-import { Contact } from './pages/contact/Contact'
-import { ContactComplete } from './pages/contact/ContactComplete'
-import { ProfileEdit } from './pages/profile/ProfileEdit'
+import { Contact } from "./pages/contact/Contact";
+import { ContactComplete } from "./pages/contact/ContactComplete";
+import { ProfileEdit } from "./pages/profile/ProfileEdit";
 
 function App() {
   return (
@@ -56,12 +57,13 @@ function App() {
         <Route path="contact/complete" element={<ContactComplete />} />
 
         <Route path="login" element={<Login />} />
+        <Route path="login/complete" element={<LoginComplete />} />
         <Route path="signup" element={<Signup />} />
 
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;

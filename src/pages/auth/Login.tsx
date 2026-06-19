@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
-import { signIn } from '../../lib/auth'
 
 export const Login = () => {
   const navigate = useNavigate()
@@ -10,24 +9,10 @@ export const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = async (event: { preventDefault(): void }) => {
+  const handleSubmit = (event: { preventDefault(): void }) => {
     event.preventDefault()
-    setError(null)
-    setSubmitting(true)
-
-    const { error: signInError } = await signIn(email, password, rememberMe)
-
-    setSubmitting(false)
-
-    if (signInError) {
-      setError('이메일 또는 비밀번호가 올바르지 않습니다.')
-      return
-    }
-
-    navigate('/', { replace: true })
+    navigate('/login/complete', { replace: true })
   }
 
   return (
@@ -42,9 +27,8 @@ export const Login = () => {
           </label>
           <Input
             id="email"
-            type="email"
+            type="text"
             autoComplete="email"
-            required
             value={email}
             onChange={(event) => setEmail(event.target.value)}
           />
@@ -58,7 +42,6 @@ export const Login = () => {
             id="password"
             type="password"
             autoComplete="current-password"
-            required
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
@@ -74,10 +57,8 @@ export const Login = () => {
           <span className="text-sm text-gray-700">로그인 유지하기</span>
         </label>
 
-        {error && <p className="text-sm text-danger">{error}</p>}
-
-        <Button type="submit" disabled={submitting} className="w-full">
-          {submitting ? '로그인 중...' : '로그인'}
+        <Button type="submit" className="w-full">
+          로그인
         </Button>
       </form>
 
